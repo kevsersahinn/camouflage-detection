@@ -66,7 +66,7 @@ try:
             gaze.refresh(frame)
             frame = gaze.annotated_frame()
         except Exception as e:
-            # Eğer kamera anlık göz kırpmasında boş/parazitli kare yakalarsa program çökmeyecek!
+            # Eğer kamera anlık göz kırpmasında boş/parazitli kare yakalarsa program çökmeyecek
             # Hatayı yutup bir sonraki kareye geçecek.
             print("Sensor koptu, otomatik iyilestirme devrede...")
             gaze = GazeTracking()
@@ -109,8 +109,8 @@ try:
             toplam_sapma = (sapma_x + sapma_y) / 2
 
             # --- GERÇEK DİNAMİK ROI MATEMATİĞİ ---
-            # Sabit sayılar yerine, gözün taradığı alanı doğrudan piksel boyutuna haritalıyoruz.
-            # Göz sabitlendikçe kutu küçülür, etrafa bakındıkça doğrusal olarak büyür.
+            # Sabit sayılar yerine, gözün taradığı alanı doğrudan piksel boyutuna haritalıyoruz
+            # Göz sabitlendikçe kutu küçülür, etrafa bakındıkça doğrusal olarak büyür
             oransal_boyut = int(180 + (toplam_sapma * 4500))
             dinamik_kutu_boyutu = max(300, min(750, oransal_boyut)) # 300px ile 750px arasında sınırla
 
@@ -129,7 +129,7 @@ try:
 
                 if toplam_mesafe < 0.13: 
                     odak_devam_ediyor = True
-                    # Odaklanma (geri sayım) esnasında bile kutu donmaz; 
+                    # Odaklanma (geri sayım) esnasında bile kutu donmaz
                     # o anki mikro göz hareketlerinin genişliğine göre anlık esnemeye devam eder.
                     oransal_odak_boyutu = int(180 + (toplam_mesafe * 3500))
                     dinamik_kutu_boyutu = max(300, min(500, oransal_odak_boyutu))
@@ -168,7 +168,7 @@ try:
                 text = "Sensorler Hazirlaniyor..."
                 odak_baslangic_zamani = None
 
-        # --- DURUM METİNLERİ VE ARAYÜZ (UI) ---
+        # --- DURUM METİNLERİ VE ARAYÜZ ---
         if hedef_kilitlendi:
             text = "HEDEF KILITLENDI ('r' ile ac)"
             tetikleme_durumu = "ANALIZ TETIKLENDI!"
@@ -176,7 +176,7 @@ try:
             if kilitli_x is not None and kilitli_y is not None:
                 oran_metni = f"Kilitli X: {kilitli_x:.2f} | Y: {kilitli_y:.2f}"
                 
-        # KULLANICI TALİMATLARI GÜNCELLENDİ
+        # KULLANICI TALİMATLARI
         cv2.putText(frame, "OTONOM: 4sn Sabit Bak | 'r': Kilidi Ac | 'c': Kalibre | 'q': Cikis", (30, 20), cv2.FONT_HERSHEY_DUPLEX, 0.55, (0, 255, 0), 1)    
         
         # Ekrana Yazıları Basma
@@ -185,17 +185,16 @@ try:
         cv2.putText(frame, f"Sistem: {tetikleme_durumu}", (30, 130), cv2.FONT_HERSHEY_DUPLEX, 0.7, tetikleme_renk, 2)
         cv2.putText(frame, f"Ortam Isigi Skoru: {anlik_parlaklik:.0f}/255", (30, 170), cv2.FONT_HERSHEY_DUPLEX, 0.6, (255, 255, 255), 1)
         
-        # Görüntüyü %40'a kadar daha da küçültelim ki ekranda hiç yer kaplamasın
+        # Görüntüyü %40'a kadar daha da küçült
         kucuk_ekran = cv2.resize(frame, (0, 0), fx=0.7,fy=0.7)
 
-        # Pencereyi oluştur ve "HER ZAMAN ÜSTTE (TOPMOST)" kalmasını sağla
-        cv2.namedWindow("Goz Takibi Testi", cv2.WINDOW_NORMAL)
-        cv2.setWindowProperty("Goz Takibi Testi", cv2.WND_PROP_TOPMOST, 1)
+        cv2.namedWindow("Goz Takibi Testi", cv2.WINDOW_NORMAL) #pencereyi oluştur
+        cv2.setWindowProperty("Goz Takibi Testi", cv2.WND_PROP_TOPMOST, 1) # pencere her zaman üstte 
 
-        # Görüntüyü bu özel pencereye yansıt
+        # Görüntünün yansıtıldığı pencere
         cv2.imshow("Goz Takibi Testi", kucuk_ekran)
 
-        # --- TUŞ KONTROLLERİ (YENİ TEMİZ HALİ) ---
+        # --- TUŞ KONTROLLERİ ---
         tus = cv2.waitKey(1) & 0xFF
         if tus == ord('q'):
             break
@@ -209,8 +208,6 @@ try:
             referans_parlaklik = anlik_parlaklik
 
 finally:
-    # --- BURASI HAYAT KURTARAN KISIM ---
-    # Sen Q'ya bassan da, hatadan dolayı çökse de, terminali kapatsan da burası çalışır.
     webcam.release()
     cv2.destroyAllWindows()
     cv2.waitKey(1) # OpenCV'nin Windows'ta arka planda donmasını engeller.
